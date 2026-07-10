@@ -187,15 +187,21 @@ function EntraHandoff({
 function EntraGlyph() {
   return (
     <svg viewBox="0 0 24 24" className="size-4" aria-hidden>
-      <path d="M12 2 3 6.5v6C3 18 6.9 21.4 12 22c5.1-.6 9-4 9-9.5v-6L12 2Z" className="fill-raseen/15" />
+      <path
+        d="M12 2 3 6.5v6C3 18 6.9 21.4 12 22c5.1-.6 9-4 9-9.5v-6L12 2Z"
+        fill="var(--raseen)"
+        fillOpacity={0.15}
+      />
       <path
         d="M12 4.2 5 7.6v4.9c0 4 3 6.7 7 7.3 4-.6 7-3.3 7-7.3V7.6L12 4.2Z"
-        className="fill-none stroke-raseen"
+        fill="none"
+        stroke="var(--raseen)"
         strokeWidth={1.3}
       />
       <path
         d="m8.5 12.2 2.4 2.4 4.6-4.8"
-        className="fill-none stroke-raseen"
+        fill="none"
+        stroke="var(--raseen)"
         strokeWidth={1.5}
         strokeLinecap="round"
         strokeLinejoin="round"

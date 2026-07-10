@@ -247,8 +247,8 @@ function GcpWizard({ open, onClose }: { open: boolean; onClose: () => void }) {
                 className="accent-[var(--raseen)]"
               />
               <CloudProviderIcon provider={p} className="size-5" />
-              <span className="text-sm font-medium text-foreground capitalize">
-                {p === 'gcp' ? 'Google Cloud' : p}
+              <span className="text-sm font-medium text-foreground">
+                {p === 'gcp' ? 'Google Cloud' : p === 'aws' ? 'AWS' : 'Azure'}
               </span>
               {p !== 'gcp' ? (
                 <span className="ml-auto text-xs text-muted-foreground">

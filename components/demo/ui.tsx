@@ -263,14 +263,14 @@ export function MiniLineChart({
             x2={w - padX}
             y1={padY + t * (h - padY * 2)}
             y2={padY + t * (h - padY * 2)}
-            className="stroke-border"
+            stroke="var(--border)"
             strokeWidth={1}
           />
         ))}
-        <path d={areaPath} className="fill-raseen/8" />
+        <path d={areaPath} fill="var(--raseen)" fillOpacity={0.1} />
         <path
           d={linePath}
-          className="stroke-raseen"
+          stroke="var(--raseen)"
           strokeWidth={2}
           fill="none"
           strokeLinecap="round"
@@ -282,7 +282,8 @@ export function MiniLineChart({
             cx={p.x}
             cy={p.y}
             r={3}
-            className="fill-card stroke-raseen"
+            fill="var(--card)"
+            stroke="var(--raseen)"
             strokeWidth={2}
           />
         ))}
@@ -341,7 +342,7 @@ export function QrGlyph({
       aria-label="Verification code glyph"
       shapeRendering="crispEdges"
     >
-      <rect width={size} height={size} className="fill-card" />
+      <rect width={size} height={size} fill="var(--card)" />
       {Array.from({ length: size }).map((_, r) =>
         Array.from({ length: size }).map((_, c) => {
           const idx = r * size + c
@@ -354,7 +355,7 @@ export function QrGlyph({
               y={r}
               width={1}
               height={1}
-              className="fill-foreground"
+              fill="var(--foreground)"
             />
           )
         }),

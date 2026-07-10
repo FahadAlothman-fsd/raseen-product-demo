@@ -423,12 +423,20 @@ function PostureRing({ value }: { value: number }) {
   const dash = (value / 100) * c
   return (
     <svg viewBox="0 0 80 80" className="size-20 shrink-0 -rotate-90">
-      <circle cx="40" cy="40" r={r} className="fill-none stroke-muted" strokeWidth="8" />
       <circle
         cx="40"
         cy="40"
         r={r}
-        className="fill-none stroke-success"
+        fill="none"
+        stroke="var(--muted)"
+        strokeWidth="8"
+      />
+      <circle
+        cx="40"
+        cy="40"
+        r={r}
+        fill="none"
+        stroke="var(--success)"
         strokeWidth="8"
         strokeLinecap="round"
         strokeDasharray={`${dash} ${c}`}
