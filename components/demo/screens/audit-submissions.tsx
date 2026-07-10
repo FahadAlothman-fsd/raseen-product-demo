@@ -74,6 +74,7 @@ function RoundTab({
 }
 
 function RoundOne() {
+  const { dispatch } = useDemo()
   const s = submissionRound1
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
@@ -164,7 +165,7 @@ function RoundOne() {
           <Button
             size="sm"
             className="mt-3 w-full"
-            onClick={() => dispatch({ type: 'setAuditTab', tab: 'response' })}
+            onClick={() => dispatch({ type: 'goToChapter', chapter: 8 })}
           >
             Open regulatory response
             <ArrowRight className="size-4" />
