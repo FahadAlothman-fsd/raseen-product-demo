@@ -9,18 +9,34 @@ import { useEffect, type ReactNode } from 'react'
 type BadgeVariant =
   | 'neutral'
   | 'raseen'
+  | 'info'
+  | 'sama'
   | 'success'
   | 'warning'
   | 'danger'
   | 'outline'
+  | 'solidInfo'
+  | 'solidSuccess'
+  | 'solidWarning'
+  | 'solidDanger'
+  | 'solidNeutral'
 
 const badgeStyles: Record<BadgeVariant, string> = {
   neutral: 'bg-muted text-muted-foreground border-transparent',
   raseen: 'bg-raseen-muted text-raseen border-transparent',
+  info: 'bg-info-muted text-info border-transparent',
+  sama: 'bg-sama-muted text-sama border-transparent',
   success: 'bg-success-muted text-success border-transparent',
   warning: 'bg-warning-muted text-warning-foreground border-transparent',
   danger: 'bg-danger-muted text-danger border-transparent',
   outline: 'bg-transparent text-foreground border-border',
+  // Solid status pills, matching the real product's Active/Draft/failed chips.
+  solidInfo: 'bg-info text-info-foreground border-transparent',
+  solidSuccess: 'bg-success text-success-foreground border-transparent',
+  solidWarning:
+    'bg-warning text-warning-foreground border-transparent [--warning-foreground:oklch(0.28_0.06_60)]',
+  solidDanger: 'bg-danger text-danger-foreground border-transparent',
+  solidNeutral: 'bg-foreground text-background border-transparent',
 }
 
 export function Badge({
@@ -45,6 +61,176 @@ export function Badge({
   )
 }
 
+/* ---------- StatCard ---------- */
+
+type StatTone = 'raseen' | 'info' | 'sama' | 'success' | 'warning' | 'danger' | 'neutral'
+
+const statIconTone: Record<StatTone, string> = {
+  raseen: 'bg-raseen-muted text-raseen',
+  info: 'bg-info-muted text-info',
+  sama: 'bg-sama-muted text-sama',
+  success: 'bg-success-muted text-success',
+  warning: 'bg-warning-muted text-warning-foreground',
+  danger: 'bg-danger-muted text-danger',
+  neutral: 'bg-muted text-muted-foreground',
+}
+
+export function StatCard({
+  label,
+  value,
+  hint,
+  icon,
+  tone = 'neutral',
+  className,
+}: {
+  label: ReactNode
+  value: ReactNode
+  hint?: ReactNode
+  icon?: ReactNode
+  tone?: StatTone
+  className?: string
+}) {
+  return (
+    <div
+      className={cn(
+        'flex flex-col rounded-surface border border-border bg-card p-4',
+        className,
+      )}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <span className="text-sm font-medium text-muted-foreground">{label}</span>
+        {icon ? (
+          <span
+            className={cn(
+              'grid size-8 shrink-0 place-items-center rounded-md',
+              statIconTone[tone],
+            )}
+          >
+            {icon}
+          </span>
+        ) : null}
+      </div>
+      <div className="mt-3 text-2xl font-semibold tracking-tight text-foreground tabular-nums">
+        {value}
+      </div>
+      {hint ? (
+        <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
+          {hint}
+        </div>
+      ) : null}
+    </div>
+  )
+}
+
+/* ---------- Panel (tinted work-zone surface) ---------- */
+
+const panelTone = {
+  plain: 'bg-panel border-border',
+  strong: 'bg-panel-strong border-border',
+  raseen: 'bg-raseen-muted/50 border-raseen/15',
+  info: 'bg-info-muted/50 border-info/15',
+  sama: 'bg-sama-muted/50 border-sama/15',
+  success: 'bg-success-muted/50 border-success/15',
+  warning: 'bg-warning-muted/60 border-warning/25',
+  danger: 'bg-danger-muted/50 border-danger/15',
+} as const
+
+export function Panel({
+  children,
+  tone = 'plain',
+  className,
+}: {
+  children: ReactNode
+  tone?: keyof typeof panelTone
+  className?: string
+}) {
+  return (
+    <div className={cn('rounded-lg border p-4', panelTone[tone], className)}>
+      {children}
+    </div>
+  )
+}
+
+/* ---------- PillTabs ---------- */
+
+export function PillTabs<T extends string>({
+  tabs,
+  value,
+  onChange,
+  className,
+}: {
+  tabs: { id: T; label: ReactNode; icon?: ReactNode }[]
+  value: T
+  onChange: (id: T) => void
+  className?: string
+}) {
+  return (
+    <div
+      role="tablist"
+      className={cn(
+        'inline-flex flex-wrap items-center gap-1 rounded-lg border border-border bg-card p-1',
+        className,
+      )}
+    >
+      {tabs.map((t) => {
+        const active = t.id === value
+        return (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={active}
+            onClick={() => onChange(t.id)}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
+              active
+                ? 'bg-foreground text-background'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+            )}
+          >
+            {t.icon}
+            {t.label}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+/* ---------- Progress ---------- */
+
+export function ProgressBar({
+  value,
+  tone = 'raseen',
+  className,
+}: {
+  value: number
+  tone?: 'raseen' | 'info' | 'success' | 'warning' | 'danger'
+  className?: string
+}) {
+  const barTone = {
+    raseen: 'bg-raseen',
+    info: 'bg-info',
+    success: 'bg-success',
+    warning: 'bg-warning',
+    danger: 'bg-danger',
+  }[tone]
+  return (
+    <div
+      className={cn('h-1.5 w-full overflow-hidden rounded-full bg-muted', className)}
+      role="progressbar"
+      aria-valuenow={Math.round(value)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    >
+      <div
+        className={cn('h-full rounded-full transition-all', barTone)}
+        style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
+      />
+    </div>
+  )
+}
+
 /* ---------- StatusDot ---------- */
 
 const dotStyles = {
@@ -53,6 +239,8 @@ const dotStyles = {
   danger: 'bg-danger',
   neutral: 'bg-muted-foreground',
   raseen: 'bg-raseen',
+  info: 'bg-info',
+  sama: 'bg-sama',
 } as const
 
 export function StatusDot({

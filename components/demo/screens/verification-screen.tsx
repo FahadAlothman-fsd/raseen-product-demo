@@ -1,7 +1,7 @@
 'use client'
 
 import { verification, finalReport } from '@/lib/demo-data'
-import { RaseenLockup } from '../logo'
+import { RaseenWordmark, SamawiWordmark } from '../logo'
 import { Badge, KeyValue, QrGlyph, StatusDot, Surface } from '@/components/demo/ui'
 import { Button } from '@/components/ui/button'
 import { useDemo } from '../demo-context'
@@ -16,13 +16,21 @@ export function VerificationScreen() {
 
   return (
     <div className="min-h-full bg-secondary/30">
-      {/* Public-style header */}
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-3.5">
-          <RaseenLockup subtitle={false} />
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+      {/* Public-style branded header */}
+      <header className="relative overflow-hidden border-b border-white/10">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/raseen-blue-background.png"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 size-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[#151642]/80" aria-hidden />
+        <div className="relative mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+          <RaseenWordmark variant="white" className="text-xl" />
+          <div className="flex items-center gap-2 text-xs text-white/75">
             <Lock className="size-3.5" />
-            Public verification
+            Public verification portal
           </div>
         </div>
       </header>
@@ -138,6 +146,11 @@ export function VerificationScreen() {
           >
             Back to report
           </Button>
+        </div>
+
+        <div className="mt-10 flex items-center justify-center gap-2 border-t border-border pt-6 text-xs text-muted-foreground">
+          <span>RASEEN is operated by</span>
+          <SamawiWordmark className="h-3.5" />
         </div>
       </div>
     </div>

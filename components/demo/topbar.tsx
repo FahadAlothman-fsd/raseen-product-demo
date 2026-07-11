@@ -1,10 +1,11 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { ChevronDown, LogOut, Search, Building2 } from 'lucide-react'
+import { ChevronDown, LogOut, Search } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useDemo, type View } from './demo-context'
 import { org, user } from '@/lib/demo-data'
+import { SamawiTile } from './logo'
 
 const crumbs: Record<View, string[]> = {
   sso: ['Sign in'],
@@ -27,8 +28,8 @@ export function TopBar() {
     <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-border bg-card px-5">
       <nav aria-label="Breadcrumb" className="min-w-0">
         <ol className="flex items-center gap-1.5 text-sm">
-          <li className="flex items-center gap-1.5 text-muted-foreground">
-            <Building2 className="size-4" />
+          <li className="flex items-center gap-2 text-muted-foreground">
+            <SamawiTile tone="dark" className="size-6 rounded" />
             <span className="font-medium text-foreground">{org.name}</span>
           </li>
           {trail.map((c, i) => (
@@ -56,9 +57,9 @@ export function TopBar() {
             /
           </kbd>
         </div>
-        <div className="hidden items-center gap-2 rounded-lg bg-secondary px-2.5 py-1.5 text-xs font-medium text-secondary-foreground md:flex">
-          <span className="size-1.5 rounded-full bg-success" aria-hidden />
-          {org.posture}% posture
+        <div className="hidden items-center gap-2 rounded-lg border border-sama/20 bg-sama-muted px-2.5 py-1.5 text-xs font-medium text-sama md:flex">
+          <span className="size-1.5 rounded-full bg-sama" aria-hidden />
+          SAMA CSF · {org.posture}% posture
         </div>
         <UserMenu onSignOut={() => dispatch({ type: 'reset' })} />
       </div>
