@@ -138,7 +138,7 @@ function reducer(state: DemoState, action: Action): DemoState {
         signedIn: true,
         authenticating: false,
         chapter: state.chapter < 2 ? 2 : state.chapter,
-        view: 'overview',
+        view: 'integrations',
       }
     case 'navigate':
       return { ...state, view: action.view }

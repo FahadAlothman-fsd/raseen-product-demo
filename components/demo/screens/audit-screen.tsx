@@ -111,7 +111,7 @@ function OverviewPanel() {
   const pct = Math.round((a.completed / a.controlsTotal) * 100)
 
   const queueAction = (action: 'response' | 'controls' | 'syncs') => {
-    if (action === 'response') dispatch({ type: 'setAuditTab', tab: 'response' })
+    if (action === 'response') dispatch({ type: 'goToChapter', chapter: 8 })
     else if (action === 'controls') dispatch({ type: 'setAuditTab', tab: 'controls' })
     else dispatch({ type: 'setAuditTab', tab: 'syncs' })
   }
