@@ -33,7 +33,7 @@ export function ReportScreen() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => dispatch({ type: 'navigate', view: 'verification' })}
+            onClick={() => dispatch({ type: 'goToChapter', chapter: 11 })}
             >
               <ShieldCheck className="size-4" />
               Verify

@@ -37,6 +37,9 @@ export function VerificationScreen() {
 
       <div className="mx-auto max-w-3xl px-6 py-10">
         <div className="text-center">
+          <Badge variant="warning" className="mb-4">
+            Sample demo report
+          </Badge>
           <h1 className="text-xl font-semibold tracking-tight text-balance text-foreground">
             Verify a RASEEN assessment report
           </h1>
@@ -142,7 +145,7 @@ export function VerificationScreen() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => dispatch({ type: 'navigate', view: 'report' })}
+            onClick={() => dispatch({ type: 'goToChapter', chapter: 10 })}
           >
             Back to report
           </Button>
