@@ -11,7 +11,7 @@ import {
   SurfaceHeader,
   SideSheet,
 } from '@/components/demo/ui'
-import { RaseenMark } from '../logo'
+import { RaseenWordmark, SamawiWordmark } from '../logo'
 import { Button } from '@/components/ui/button'
 import { useDemo } from '../demo-context'
 import { useState } from 'react'
@@ -33,7 +33,7 @@ export function ReportScreen() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => dispatch({ type: 'navigate', view: 'verification' })}
+            onClick={() => dispatch({ type: 'goToChapter', chapter: 11 })}
             >
               <ShieldCheck className="size-4" />
               Verify
@@ -221,11 +221,26 @@ function OutcomeStat({
 function ReportDocument() {
   const r = finalReport
   return (
-    <div className="rounded-lg border border-border bg-card">
-      <div className="flex items-center justify-between border-b border-border px-6 py-4">
-        <RaseenMark />
-        <Badge variant="success">
-          <StatusDot tone="success" />
+    <div className="overflow-hidden rounded-lg border border-border bg-card">
+      <div className="relative flex items-center justify-between overflow-hidden border-b border-white/10 px-6 py-4">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/raseen-blue-background.png"
+          alt=""
+          aria-hidden
+          className="absolute inset-0 size-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[#151642]/82" aria-hidden />
+        <div className="relative flex items-center gap-3">
+          <RaseenWordmark variant="white" className="text-xl" />
+          <span className="hidden items-center gap-1.5 text-xs text-white/60 sm:flex">
+            <span className="h-4 w-px bg-white/25" />
+            by
+            <SamawiWordmark variant="white" className="h-3" />
+          </span>
+        </div>
+        <Badge variant="solidSuccess" className="relative">
+          <StatusDot tone="success" className="bg-success-foreground" />
           {r.outcome}
         </Badge>
       </div>

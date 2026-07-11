@@ -36,6 +36,7 @@ export type DemoState = {
   auditTab: AuditTab
   submissionRound: 1 | 2
   responseSubmitted: boolean
+  presenterMode: boolean
 }
 
 const initialState: DemoState = {
@@ -46,15 +47,17 @@ const initialState: DemoState = {
   auditTab: 'overview',
   submissionRound: 1,
   responseSubmitted: false,
+  presenterMode: false,
 }
 
 // Deterministic snapshot for each chapter.
 function snapshotFor(chapter: number, base: DemoState): DemoState {
   const signedIn = chapter > 1
   const responseSubmitted = chapter >= 9 ? true : base.responseSubmitted
+  const presenterMode = base.presenterMode
   switch (chapter) {
     case 1:
-      return { ...initialState }
+      return { ...initialState, presenterMode }
     case 2:
       return { ...base, chapter, signedIn, view: 'integrations' }
     case 3:
@@ -106,6 +109,8 @@ type Action =
   | { type: 'setAuditTab'; tab: AuditTab }
   | { type: 'setSubmissionRound'; round: 1 | 2 }
   | { type: 'submitResponse' }
+  | { type: 'togglePresenter' }
+  | { type: 'setPresenter'; on: boolean }
 
 function reducer(state: DemoState, action: Action): DemoState {
   switch (action.type) {
@@ -120,7 +125,11 @@ function reducer(state: DemoState, action: Action): DemoState {
       return snapshotFor(n, state)
     }
     case 'reset':
-      return { ...initialState }
+      return { ...initialState, presenterMode: state.presenterMode }
+    case 'togglePresenter':
+      return { ...state, presenterMode: !state.presenterMode }
+    case 'setPresenter':
+      return { ...state, presenterMode: action.on }
     case 'startAuth':
       return { ...state, authenticating: true }
     case 'signIn':
@@ -129,7 +138,7 @@ function reducer(state: DemoState, action: Action): DemoState {
         signedIn: true,
         authenticating: false,
         chapter: state.chapter < 2 ? 2 : state.chapter,
-        view: 'overview',
+        view: 'integrations',
       }
     case 'navigate':
       return { ...state, view: action.view }

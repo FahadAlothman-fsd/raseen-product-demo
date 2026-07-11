@@ -8,6 +8,7 @@ import {
   RotateCcw,
   Check,
   ListOrdered,
+  Presentation,
 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useDemo } from './demo-context'
@@ -62,6 +63,16 @@ export function PresenterBar() {
         <Button
           variant="ghost"
           size="sm"
+          onClick={() => dispatch({ type: 'setPresenter', on: true })}
+          title="Hide chapter bar for recording (Shift+D)"
+        >
+          <Presentation className="size-4" />
+          Presenter
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => dispatch({ type: 'reset' })}
         >
           <RotateCcw className="size-4" />
@@ -69,6 +80,24 @@ export function PresenterBar() {
         </Button>
       </div>
     </div>
+  )
+}
+
+export function PresenterToggle() {
+  const { dispatch } = useDemo()
+  return (
+    <button
+      type="button"
+      onClick={() => dispatch({ type: 'setPresenter', on: false })}
+      title="Exit presenter mode (Shift+D)"
+      aria-label="Exit presenter mode"
+      className="group fixed bottom-3 right-3 z-50 flex items-center gap-2 rounded-full border border-border bg-card/80 px-2 py-1.5 text-xs text-muted-foreground opacity-40 shadow-sm backdrop-blur transition-all hover:bg-card hover:text-foreground hover:opacity-100 focus-visible:opacity-100 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+    >
+      <Presentation className="size-4" />
+      <span className="hidden max-w-0 overflow-hidden whitespace-nowrap transition-all group-hover:max-w-[10rem] group-hover:pr-1 group-focus-visible:max-w-[10rem] sm:inline">
+        Exit presenter · Shift+D
+      </span>
+    </button>
   )
 }
 

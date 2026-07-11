@@ -1,6 +1,10 @@
 'use client'
 
-import { regulatoryResponse, submissionRound1 } from '@/lib/demo-data'
+import {
+  regulatoryResponse,
+  submissionRound1,
+  evaluatedResources,
+} from '@/lib/demo-data'
 import {
   Badge,
   FileChip,
@@ -10,16 +14,20 @@ import {
 } from '@/components/demo/ui'
 import { Button } from '@/components/ui/button'
 import { useDemo } from '../demo-context'
-import { Check, Paperclip, Send } from 'lucide-react'
+import { Check, FileText, Paperclip, Save, Send } from 'lucide-react'
+import { useState } from 'react'
+
+const failedResources = evaluatedResources.filter((r) => r.result === 'Failed')
 
 export function ResponsePanel() {
   const { state, dispatch } = useDemo()
   const r = regulatoryResponse
   const submitted = state.responseSubmitted || state.submissionRound === 2
+  const [draftSaved, setDraftSaved] = useState(false)
 
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-      <div className="lg:col-span-2 space-y-5">
+      <div className="space-y-5 lg:col-span-2">
         <Surface>
           <SurfaceHeader
             title="Regulatory response"
@@ -38,6 +46,45 @@ export function ResponsePanel() {
               )
             }
           />
+
+          {/* Item-level responses for each targeted resource */}
+          <div className="border-b border-border px-5 py-4">
+            <div className="mb-3 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+              Item-level responses · {failedResources.length} targeted resources
+            </div>
+            <div className="space-y-3">
+              {failedResources.map((res) => (
+                <div
+                  key={res.id}
+                  className="rounded-lg border border-border bg-panel p-3.5"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <FileText className="size-4 shrink-0 text-muted-foreground" />
+                      <span className="truncate font-mono text-[0.8rem] text-foreground">
+                        {res.name}
+                      </span>
+                    </div>
+                    <Badge variant={submitted ? 'success' : 'warning'}>
+                      {submitted ? (
+                        <>
+                          <Check className="size-3" />
+                          Resolved
+                        </>
+                      ) : (
+                        'Addressed'
+                      )}
+                    </Badge>
+                  </div>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {res.finding} · Public access removed and uniform bucket-level
+                    access enabled. Re-evaluated against {res.encryption}.
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div className="px-5 py-4">
             <label
               htmlFor="response-body"
@@ -49,6 +96,7 @@ export function ResponsePanel() {
               id="response-body"
               defaultValue={r.body}
               readOnly={submitted}
+              onChange={() => setDraftSaved(false)}
               rows={5}
               className="w-full resize-none rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm leading-relaxed text-foreground shadow-sm transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none read-only:bg-secondary/40 read-only:text-muted-foreground"
               aria-describedby="response-hint"
@@ -70,31 +118,71 @@ export function ResponsePanel() {
               </div>
             </div>
           </div>
-          <div className="flex items-center justify-between border-t border-border px-5 py-3.5">
+          <div className="flex items-center justify-between gap-3 border-t border-border px-5 py-3.5">
             <span className="text-xs text-muted-foreground">
               {submitted
                 ? 'Response submitted and accepted by the regulator.'
-                : 'Review the response, then submit to the auditor.'}
+                : draftSaved
+                  ? 'Draft saved locally. Submit when ready.'
+                  : 'Review the response, then submit to the auditor.'}
             </span>
-            <Button
-              size="sm"
-              disabled={submitted}
-              onClick={() => dispatch({ type: 'submitResponse' })}
-            >
-              {submitted ? (
-                <>
-                  <Check className="size-4" />
-                  Response submitted
-                </>
-              ) : (
-                <>
-                  <Send className="size-4" />
-                  Submit response
-                </>
-              )}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={submitted}
+                onClick={() => setDraftSaved(true)}
+              >
+                {draftSaved ? (
+                  <>
+                    <Check className="size-4" />
+                    Draft saved
+                  </>
+                ) : (
+                  <>
+                    <Save className="size-4" />
+                    Save draft
+                  </>
+                )}
+              </Button>
+              <Button
+                size="sm"
+                disabled={submitted}
+                onClick={() => dispatch({ type: 'submitResponse' })}
+              >
+                {submitted ? (
+                  <>
+                    <Check className="size-4" />
+                    Response submitted
+                  </>
+                ) : (
+                  <>
+                    <Send className="size-4" />
+                    Submit response
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </Surface>
+
+        {submitted ? (
+          <Surface className="border-success/30 bg-success-muted/40 p-4">
+            <div className="flex items-center gap-3">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-success text-success-foreground">
+                <Check className="size-5" />
+              </span>
+              <div>
+                <div className="text-sm font-semibold text-foreground">
+                  Response submitted to Saudi Central Bank
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Submitted {r.respondedOn} · Awaiting Round 2 re-evaluation
+                </div>
+              </div>
+            </div>
+          </Surface>
+        ) : null}
       </div>
 
       <div className="space-y-5">

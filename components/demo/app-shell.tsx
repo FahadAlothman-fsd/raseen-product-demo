@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useDemo } from './demo-context'
 import { Sidebar } from './sidebar'
 import { TopBar } from './topbar'
@@ -14,9 +15,29 @@ import { AuditScreen } from './screens/audit-screen'
 import { ReportsScreen } from './screens/reports-screen'
 import { ReportScreen } from './screens/report-screen'
 import { VerificationScreen } from './screens/verification-screen'
+import { PresenterToggle } from './presenter-bar'
 
 export function AppShell() {
-  const { state } = useDemo()
+  const { state, dispatch } = useDemo()
+
+  // Shift+D toggles presenter mode (hides the bottom chapter bar for clean chapter videos).
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const target = e.target as HTMLElement | null
+      const typing =
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      if (typing) return
+      if (e.shiftKey && (e.key === 'D' || e.key === 'd')) {
+        e.preventDefault()
+        dispatch({ type: 'togglePresenter' })
+      }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [dispatch])
 
   if (!state.signedIn) {
     return (
@@ -24,7 +45,7 @@ export function AppShell() {
         <div className="flex-1 overflow-y-auto">
           <SsoScreen />
         </div>
-        <PresenterBar />
+        {state.presenterMode ? <PresenterToggle /> : <PresenterBar />}
       </div>
     )
   }
@@ -40,7 +61,7 @@ export function AppShell() {
           </main>
         </div>
       </div>
-      <PresenterBar />
+      {state.presenterMode ? <PresenterToggle /> : <PresenterBar />}
     </div>
   )
 }

@@ -56,18 +56,21 @@ export function OverviewScreen() {
             value={`${org.posture}%`}
             hint="+2 vs last month"
             tone="success"
+            iconTone="sama"
           />
           <StatCell
             icon={Boxes}
             label="Cloud resources"
             value={org.resources.toLocaleString()}
             hint="across 3 clouds"
+            iconTone="info"
           />
           <StatCell
             icon={Users}
             label="Employees"
             value={org.employees.toString()}
             hint="SSO enforced"
+            iconTone="raseen"
           />
           <StatCell
             icon={ClipboardCheck}
@@ -75,6 +78,7 @@ export function OverviewScreen() {
             value={`${compliance.compliantControls}`}
             hint={`${compliance.needAttention} need attention`}
             tone="warning"
+            iconTone="warning"
           />
         </div>
       </Surface>
@@ -222,18 +226,29 @@ export function OverviewScreen() {
   )
 }
 
+const iconToneClass = {
+  neutral: 'bg-secondary text-muted-foreground',
+  raseen: 'bg-raseen-muted text-raseen',
+  info: 'bg-info-muted text-info',
+  sama: 'bg-sama-muted text-sama',
+  success: 'bg-success-muted text-success',
+  warning: 'bg-warning-muted text-warning-foreground',
+} as const
+
 function StatCell({
   icon: Icon,
   label,
   value,
   hint,
   tone = 'neutral',
+  iconTone = 'neutral',
 }: {
   icon: typeof Boxes
   label: string
   value: string
   hint?: string
   tone?: 'neutral' | 'success' | 'warning'
+  iconTone?: keyof typeof iconToneClass
 }) {
   const hintClass =
     tone === 'success'
@@ -243,7 +258,9 @@ function StatCell({
         : 'text-muted-foreground'
   return (
     <div className="flex items-start gap-3 px-5 py-4">
-      <span className="mt-0.5 grid size-8 place-items-center rounded-lg bg-secondary text-muted-foreground">
+      <span
+        className={`mt-0.5 grid size-8 place-items-center rounded-lg ${iconToneClass[iconTone]}`}
+      >
         <Icon className="size-4" />
       </span>
       <div>

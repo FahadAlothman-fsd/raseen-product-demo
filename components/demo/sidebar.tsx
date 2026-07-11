@@ -9,9 +9,10 @@ import {
   FileText,
   ChevronRight,
 } from 'lucide-react'
-import { RaseenLockup } from './logo'
+import { RaseenWordmark, SamawiTile } from './logo'
 import { useDemo, type View } from './demo-context'
 import { Badge } from './ui'
+import { org } from '@/lib/demo-data'
 
 type NavItem = {
   view: View
@@ -48,7 +49,21 @@ export function Sidebar() {
   return (
     <aside className="flex w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
       <div className="flex h-14 items-center border-b border-sidebar-border px-4">
-        <RaseenLockup />
+        <RaseenWordmark className="text-[1.35rem]" />
+      </div>
+
+      <div className="border-b border-sidebar-border px-3 py-3">
+        <div className="flex items-center gap-2.5 rounded-lg border border-sidebar-border bg-card px-2.5 py-2">
+          <SamawiTile tone="dark" className="size-8" />
+          <span className="min-w-0 leading-tight">
+            <span className="block truncate text-sm font-semibold text-foreground">
+              {org.name}
+            </span>
+            <span className="block truncate text-xs text-muted-foreground">
+              {org.domain} · {org.region}
+            </span>
+          </span>
+        </div>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4">
