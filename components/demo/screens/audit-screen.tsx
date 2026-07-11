@@ -3,12 +3,16 @@
 import {
   auditSession,
   auditControls,
+  auditParticipants,
+  auditWorkQueue,
   syncJobs,
   type AuditControl,
 } from '@/lib/demo-data'
 import { PageHeader, ScreenContainer } from './page-header'
 import {
+  Avatar,
   Badge,
+  Donut,
   KeyValue,
   StatusDot,
   Surface,
@@ -20,7 +24,14 @@ import { useDemo, type AuditTab } from '../demo-context'
 import { SubmissionsPanel, TimelineItem } from './audit-submissions'
 import { ResponsePanel } from './audit-response'
 import { useState } from 'react'
-import { ArrowRight, Calendar, Check, ChevronRight, FileCheck2 } from 'lucide-react'
+import {
+  ArrowRight,
+  Calendar,
+  Check,
+  ChevronRight,
+  Clock,
+  FileCheck2,
+} from 'lucide-react'
 
 const TABS: { key: AuditTab; label: string }[] = [
   { key: 'overview', label: 'Overview' },
@@ -96,33 +107,90 @@ export function AuditScreen() {
 
 function OverviewPanel() {
   const a = auditSession
+  const { dispatch } = useDemo()
   const pct = Math.round((a.completed / a.controlsTotal) * 100)
+
+  const queueAction = (action: 'response' | 'controls' | 'syncs') => {
+    if (action === 'response') dispatch({ type: 'setAuditTab', tab: 'response' })
+    else if (action === 'controls') dispatch({ type: 'setAuditTab', tab: 'controls' })
+    else dispatch({ type: 'setAuditTab', tab: 'syncs' })
+  }
+
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-      <div className="lg:col-span-2 space-y-5">
+      <div className="space-y-5 lg:col-span-2">
+        {/* Command center header: donut + deadline + composition */}
         <Surface>
-          <div className="grid grid-cols-2 divide-x divide-y divide-border sm:grid-cols-4 sm:divide-y-0">
-            <ProgressStat label="Controls" value={a.controlsTotal} />
-            <ProgressStat label="Completed" value={a.completed} tone="success" />
-            <ProgressStat label="In review" value={a.inReview} tone="raseen" />
-            <ProgressStat
-              label="Revision requested"
-              value={a.revisionRequested}
-              tone="warning"
-            />
-          </div>
-          <div className="border-t border-border px-5 py-4">
-            <div className="mb-1.5 flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Assessment progress</span>
-              <span className="font-medium tabular-nums text-foreground">{pct}%</span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-success"
-                style={{ width: `${pct}%` }}
+          <div className="grid grid-cols-1 gap-5 p-5 sm:grid-cols-[auto_1fr]">
+            <div className="flex items-center gap-5">
+              <Donut
+                value={pct}
+                tone="success"
+                label={`${pct}%`}
+                sublabel="Complete"
+                size={132}
               />
             </div>
+            <div className="flex flex-col justify-center gap-3">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <ProgressStat label="Controls" value={a.controlsTotal} />
+                <ProgressStat label="Completed" value={a.completed} tone="success" />
+                <ProgressStat label="In review" value={a.inReview} tone="info" />
+                <ProgressStat
+                  label="Revision"
+                  value={a.revisionRequested}
+                  tone="warning"
+                />
+              </div>
+              <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+                <Badge variant="warning">
+                  <Clock className="size-3" />
+                  {a.daysRemaining} days to deadline
+                </Badge>
+                <Badge variant="info">Round {a.currentRound} active</Badge>
+                <span className="text-xs text-muted-foreground">
+                  Due {a.due}
+                </span>
+              </div>
+            </div>
           </div>
+        </Surface>
+
+        {/* Work queue — interactive */}
+        <Surface>
+          <SurfaceHeader
+            title="Work queue"
+            description="Outstanding items for this session, in priority order."
+          />
+          <ul className="divide-y divide-border">
+            {auditWorkQueue.map((item) => (
+              <li
+                key={item.id}
+                className="flex items-center gap-4 px-5 py-3.5"
+              >
+                <StatusDot tone={item.tone} className="size-2.5" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-foreground">
+                      {item.label}
+                    </span>
+                    <span className="font-mono text-xs text-muted-foreground">
+                      {item.control}
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted-foreground">{item.status}</div>
+                </div>
+                <Button
+                  variant={item.tone === 'warning' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => queueAction(item.action)}
+                >
+                  {item.actionLabel}
+                  <ChevronRight className="size-4" />
+                </Button>
+              </li>
+            ))}
+          </ul>
         </Surface>
 
         <Surface>
@@ -143,17 +211,50 @@ function OverviewPanel() {
         </Surface>
       </div>
 
-      <Surface>
-        <SurfaceHeader title="Timeline" />
-        <ol className="px-5 py-4">
-          <TimelineItem label="Session opened" date="Jul 1" done />
-          <TimelineItem label="Round 1 submitted" date="Jul 7" done />
-          <TimelineItem label="Revision requested" date="Jul 8" tone="warning" done />
-          <TimelineItem label="Remediation response" date="Jul 10" done />
-          <TimelineItem label="Round 2 accepted" date="Jul 10" tone="success" done />
-          <TimelineItem label="Final report issued" date="Jul 15" tone="success" done last />
-        </ol>
-      </Surface>
+      <div className="space-y-5">
+        <Surface>
+          <SurfaceHeader title="Participants" />
+          <ul className="divide-y divide-border">
+            {auditParticipants.map((p) => (
+              <li key={p.name} className="flex items-center gap-3 px-5 py-3">
+                <Avatar
+                  initials={p.initials}
+                  tone={p.side === 'regulator' ? 'sama' : 'raseen'}
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-medium text-foreground">
+                    {p.name}
+                  </div>
+                  <div className="truncate text-xs text-muted-foreground">
+                    {p.role}
+                  </div>
+                </div>
+                <Badge variant={p.side === 'regulator' ? 'sama' : 'neutral'}>
+                  {p.side === 'regulator' ? 'SAMA' : 'ACME'}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        </Surface>
+
+        <Surface>
+          <SurfaceHeader title="Timeline" />
+          <ol className="px-5 py-4">
+            <TimelineItem label="Session opened" date="Jul 1" done />
+            <TimelineItem label="Round 1 submitted" date="Jul 7" done />
+            <TimelineItem label="Revision requested" date="Jul 8" tone="warning" done />
+            <TimelineItem label="Remediation response" date="Jul 10" done />
+            <TimelineItem label="Round 2 accepted" date="Jul 10" tone="success" done />
+            <TimelineItem
+              label="Final report issued"
+              date="Jul 15"
+              tone="success"
+              done
+              last
+            />
+          </ol>
+        </Surface>
+      </div>
     </div>
   )
 }
@@ -165,18 +266,20 @@ function ProgressStat({
 }: {
   label: string
   value: number
-  tone?: 'default' | 'success' | 'warning' | 'raseen'
+  tone?: 'default' | 'success' | 'warning' | 'info' | 'raseen'
 }) {
   const color =
     tone === 'success'
       ? 'text-success'
       : tone === 'warning'
         ? 'text-warning-foreground'
-        : tone === 'raseen'
-          ? 'text-raseen'
-          : 'text-foreground'
+        : tone === 'info'
+          ? 'text-info'
+          : tone === 'raseen'
+            ? 'text-raseen'
+            : 'text-foreground'
   return (
-    <div className="px-5 py-4">
+    <div>
       <div className={'text-2xl font-semibold tabular-nums ' + color}>{value}</div>
       <div className="mt-0.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
         {label}

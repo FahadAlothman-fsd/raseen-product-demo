@@ -231,6 +231,106 @@ export function ProgressBar({
   )
 }
 
+/* ---------- Donut ---------- */
+
+export function Donut({
+  value,
+  size = 128,
+  thickness = 12,
+  tone = 'success',
+  label,
+  sublabel,
+}: {
+  value: number
+  size?: number
+  thickness?: number
+  tone?: 'raseen' | 'info' | 'sama' | 'success' | 'warning' | 'danger'
+  label?: ReactNode
+  sublabel?: ReactNode
+}) {
+  const toneVar = {
+    raseen: 'var(--raseen)',
+    info: 'var(--info)',
+    sama: 'var(--sama)',
+    success: 'var(--success)',
+    warning: 'var(--warning)',
+    danger: 'var(--danger)',
+  }[tone]
+  const r = (size - thickness) / 2
+  const c = 2 * Math.PI * r
+  const clamped = Math.max(0, Math.min(100, value))
+  const offset = c - (clamped / 100) * c
+  return (
+    <div
+      className="relative grid shrink-0 place-items-center"
+      style={{ width: size, height: size }}
+    >
+      <svg width={size} height={size} className="-rotate-90">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke="var(--muted)"
+          strokeWidth={thickness}
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={toneVar}
+          strokeWidth={thickness}
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={offset}
+        />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+        {label ? (
+          <span className="text-2xl font-semibold tracking-tight tabular-nums text-foreground">
+            {label}
+          </span>
+        ) : null}
+        {sublabel ? (
+          <span className="text-[0.7rem] font-medium tracking-wide text-muted-foreground uppercase">
+            {sublabel}
+          </span>
+        ) : null}
+      </div>
+    </div>
+  )
+}
+
+/* ---------- Avatar ---------- */
+
+export function Avatar({
+  initials,
+  tone = 'neutral',
+  className,
+}: {
+  initials: string
+  tone?: 'neutral' | 'raseen' | 'sama'
+  className?: string
+}) {
+  const toneClass = {
+    neutral: 'bg-secondary text-secondary-foreground',
+    raseen: 'bg-raseen-muted text-raseen',
+    sama: 'bg-sama-muted text-sama',
+  }[tone]
+  return (
+    <span
+      className={cn(
+        'grid size-8 shrink-0 place-items-center rounded-full text-xs font-semibold',
+        toneClass,
+        className,
+      )}
+    >
+      {initials}
+    </span>
+  )
+}
+
 /* ---------- StatusDot ---------- */
 
 const dotStyles = {

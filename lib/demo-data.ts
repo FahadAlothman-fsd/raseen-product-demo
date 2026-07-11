@@ -364,7 +364,79 @@ export const auditSession = {
   completed: 39,
   inReview: 6,
   revisionRequested: 3,
+  daysRemaining: 13,
+  currentRound: 2,
 }
+
+export const auditParticipants: {
+  name: string
+  role: string
+  side: 'organization' | 'regulator'
+  initials: string
+}[] = [
+  {
+    name: 'Omar Al-Qahtani',
+    role: 'Compliance Manager',
+    side: 'organization',
+    initials: 'OA',
+  },
+  {
+    name: 'Sara Al-Mutairi',
+    role: 'Cloud Security Lead',
+    side: 'organization',
+    initials: 'SM',
+  },
+  {
+    name: 'Layla Al-Harbi',
+    role: 'Lead Auditor',
+    side: 'regulator',
+    initials: 'LH',
+  },
+  {
+    name: 'Faisal Al-Dosari',
+    role: 'Reviewing Auditor',
+    side: 'regulator',
+    initials: 'FD',
+  },
+]
+
+export const auditWorkQueue: {
+  id: string
+  label: string
+  control: string
+  tone: 'warning' | 'info' | 'success'
+  status: string
+  action: 'response' | 'controls' | 'syncs'
+  actionLabel: string
+}[] = [
+  {
+    id: 'WQ-1',
+    label: 'Revision request needs response',
+    control: 'SAMA-3.3.5',
+    tone: 'warning',
+    status: 'Round 1 · 2 failed resources',
+    action: 'response',
+    actionLabel: 'Open regulatory response',
+  },
+  {
+    id: 'WQ-2',
+    label: 'Controls awaiting auditor review',
+    control: '6 controls',
+    tone: 'info',
+    status: 'Submitted in Round 2',
+    action: 'controls',
+    actionLabel: 'View controls',
+  },
+  {
+    id: 'WQ-3',
+    label: 'Configuration evidence refreshed',
+    control: 'SYNC-2026-0718',
+    tone: 'success',
+    status: '74 evaluations · Jul 10',
+    action: 'syncs',
+    actionLabel: 'View syncs',
+  },
+]
 
 export type AuditControl = {
   id: string
